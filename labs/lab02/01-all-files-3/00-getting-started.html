@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1">
+<title>B09 Lab week 2</title>
+<style>
+h1, h2, h3 { color: blue; }
+table { border-collapse: collapse; }
+th, td { border: solid black 1px; padding: 0.2em; }
+table.tab td { border: none; padding: 0em; }
+col.option { width: 8em; }
+</style>
+</head>
+<body>
+<h1>B09 Lab week 2</h1>
+
+<p>It can be quite overwhelming to use a Unix-like computing environment
+(especially the text-mode command prompt) for the first time.  This lab may help
+you start.
+
+<p>We begin with some tips for beginners.  If you are already familiar with
+Linux, you may skip right to section <a href="#ex">The Exercises</a> (but
+download and save the starter files first).
+
+<!--
+<h2>File management</h2>
+
+<p>Please take a look ahead at the lecture slides “file management” for week
+2 for a quick tour of file management commands at the shell.
+-->
+
+<h2>Viewers and Editors</h2>
+
+<p>To view a short text file: ‘<code>cat <var>filename</var></code>’
+
+<p>To view a long text file: ‘<code>less <var>filename</var></code>’.
+Here are some of its keyboard commands:
+
+<table>
+<tr><th>action <th>key
+<tr><td>quit <td>q
+<tr><td>scroll <td>Down, Up, PgDn, PgUp
+</table>
+
+<p>Simple editor in a terminal: ‘<code>nano <var>filename</var></code>’.  It
+lists some commands at the bottom, using ^ to mean the Ctrl key, e.g., ^X
+means Ctrl-X and is how to exit.
+
+<p>Simple GUI editor on Ubuntu Desktop: ‘<code>gedit <var>filename</var></code>’.
+You can also launch it by: Press the Windows key, enter “gedit”, then click the
+obvious icon.
+
+<p>In the long term, you should invest time in learning a sophisticated editor
+geared towards programming. Popular choices: VS Code, Vim, Emacs, Spacemacs,
+Atom, Sublime Text, Notepad++.
+
+
+<h2>Survival Tips</h2>
+
+<p>Ctrl-C can abort most commands in terminals.  Great for accidental wrong
+commands that hang and you need your command prompt back.
+
+<p>Most commands recognize the ‘--help’ argument and output a summary of how to
+use them, e.g., ‘<code>ls --help</code>’.
+
+<p>Most also have longer docs under the ‘<code>man</code>’ command (short for
+“manual”), e.g., ‘<code>man ls</code>’.  The UI is similar to that of
+‘<code>less</code>’.
+
+<p>Exercise: The “summary” from ‘<code>ls --help</code>’ is pretty long.  Can
+you add ‘<code>less</code>’ and pipelining to display it one screenful at a
+time?  Additional information you need: ‘<code>less</code>’ is happy to read
+from stdin if you don't provide a filename.
+
+
+<h2 id="ex">The Exercises</h2>
+
+<p>(Starter files are also available on mathlab in directory
+/courses/courses/cscb09s23/laialber/l02 )
+
+<p>These exercises introduce some Unix text-processing utilities and train you
+to pick out specific information from Unix-style documentation.
+
+<p>Each exercise tells you the program name to use and where to find its
+documentation.  Your job is to find out from the documentation how to craft the
+arguments to achieve what the exercise requires.  The textbook The Linux Command
+Line also helps.  The first exercise is solved with explanation.
+
+<p>Each exercise specifies where to input from and output to, which can be
+files, and/or standard input (stdin), and/or standard output (stdout).  As
+discussed in lecture, you do not always know that stdin and stdout mean the
+terminal, and it should not matter, and you already know how to test your
+solution against both terminal and file redirection.
+
+<p>(But reminders: When stdin is terminal and you enter input by hand, use
+Ctrl-D on its own line to signify end of input.  File redirection for stdin uses
+the notation “<code>&lt; filename</code>”.  File redirection for stdout uses the
+notation “<code>&gt; filename</code>”.)
+
+<p>This lab can take longer time than the tutorial session; don't feel bad if
+you have to continue after class.  This is an exception.
+
+
+<h3>0. ls</h3>
+
+<p>Use <code>ls</code> to list the non-dot names in the current directory, in
+order from oldest to newest.
+
+<p>Documentation: ‘<code>ls --help</code>’ or ‘<code>man ls</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/ls-invocation.html"
+>link</a>.
+
+<p><b>How I solved it</b>: In any of those docs, I noticed:
+
+<p>“Usage: ls [OPTION]... [FILE]...
+<br>List information about the FILEs (the current directory by default).”
+
+<p>That's perfect, I can get the current directory by doing nothing for the FILE
+part.
+
+<p>Now the options.  I noticed:
+
+<table class="tab">
+<col class="option"/> <col/>
+<tr><td>-a, --all           <td>do not ignore entries starting with .
+</table>
+
+<p>I do want to ignore dot files, so I should absolutely avoid that option.
+
+<p>Then I noticed:
+
+<table class="tab">
+<col class="option"/> <col/>
+<tr><td>-t <td>sort by time, newest first
+</table>
+
+<p>and I also noticed:
+
+<table class="tab">
+<col class="option"/> <col/>
+<tr><td>-r, --reverse <td>reverse order while sorting
+</table>
+
+<p>So if I use them both, I'll get oldest to newest.
+
+<p><b>My solution</b>: <code>ls -t -r</code>
+
+
+<h3>1. Dealing with a naughty filename</h3>
+
+<p>I have a file but it has a naughty filename: “--help”.  Use <code>mv</code>
+to rename it to “help.txt”.
+
+<p>Documentation: In this case the most important hint is somewhere in the
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/Common-options.html"
+>Common Options</a> section.
+
+
+
+<h3>2. cat</h3>
+
+<p>Use <code>cat</code> to send the concatenation of these inputs to standard
+output: the file cat-in-1.txt, then standard input, then the file cat-in-2.txt,
+in that order.  (Verbatim, so for example don't add line numbers, don't display
+$ at end of each line, etc.)
+
+<p>Documentation: ‘<code>cat --help</code>’ or ‘<code>man cat</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html"
+>link</a>.
+
+
+<h3>3. head</h3>
+
+<p>Use <code>head</code> to output everything except the last line of the file
+headtail-in.txt.  Output to standard output.
+
+<p>Documentation: ‘<code>head --help</code>’ or ‘<code>man head</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/head-invocation.html"
+>link</a>.
+
+
+<h3>4. tail</h3>
+
+<p>Use <code>tail</code> to output the last line of the file headtail-in.txt.
+Output to standard output.
+
+<p>Documentation: ‘<code>tail --help</code>’ or ‘<code>man tail</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/tail-invocation.html"
+>link</a>.
+
+
+<h3>5. wc</h3>
+
+<p>Use <code>wc</code> to output the number of lines in the file
+headtail-in.txt.  Output to standard output.  Don't output other counts, e.g.,
+don't output the number of words.
+
+<p>Documentation: ‘<code>wc --help</code>’ or ‘<code>man wc</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/wc-invocation.html"
+>link</a>.
+
+
+<h3>6. tr</h3>
+
+<p>Use <code>tr</code> just once to perform ROT13 decryption
+(<a href="https://en.wikipedia.org/wiki/ROT13">Wikipedia entry</a>).  Input from
+standard input; output to standard output.  Don't forget that English letters
+include both uppercase and lowercase.
+
+<p>Documentation: ‘<code>tr --help</code>’ or ‘<code>man tr</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/tr-invocation.html"
+>link</a>.
+
+<p>ROT13 is great for posting spoilers without spoiling.  Here is an encrypted
+spoiler for the 2008 Iron Man movie: Veba Zna vf Gbal Fgnex.
+
+<p>(Food for thought, no need to hand in: Why does the same command do encryption too?)
+
+
+<h3>7. tr but for deletion</h3>
+
+<p>Use <code>tr</code> just once to delete all occurences of the characters ‘2’
+and ‘u’ from the input.  Input from standard input; output to standard output.
+
+<p>Documentation: ‘<code>tr --help</code>’ or ‘<code>man tr</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/tr-invocation.html"
+>link</a>.
+
+
+<h3>8. tee</h3>
+
+<p>Use <code>tee</code> to copy standard input to both standard output and the
+file tee-out.txt.  (Overwrite tee-out.txt, do not append.)
+
+<p>Documentation: ‘<code>tee --help</code>’ or ‘<code>man tee</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/tee-invocation.html"
+>link</a>.
+
+<p>Trivia: This program is called “tee” because: Think of T-shaped pipes in
+plumbing, and “T” is pronounced as “tee”.
+
+
+<h3>9. yes</h3>
+
+<p>Use a pipeline consisting of <code>yes</code> and <code>head</code> to output
+exactly 42 lines of “nonono” to standard output.
+
+<p>You must use a pipeline (the “<code>|</code>” thing as seen in the lecture),
+not the “<code>&lt;(yes ...)</code>” feature you might find on the Internet.
+This exercise requires pipelining.
+
+<p><code>yes</code> documentation: ‘<code>yes --help</code>’ or ‘<code>man
+yes</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/yes-invocation.html"
+>link</a>.
+
+<p><code>head</code> documentation: ‘<code>head --help</code>’ or ‘<code>man
+head</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/head-invocation.html"
+>link</a>.
+
+
+<h3>10. comm</h3>
+
+<p>Use <code>comm</code> to output lines that appear in menu-new.txt but not
+in menu-old.txt.  We assume that the two input files are already sorted.
+
+<p>Documentation: ‘<code>comm --help</code>’ or ‘<code>man comm</code>’ or
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/comm-invocation.html"
+>link</a>.
+
+
+<h3>What to Submit</h3>
+
+<p>Please submit a single file utils.txt on MarkUs.  The starter files include a
+copy that exemplifies the expected format, with blanks for you to fill in your
+solution.
+
+<p>Format: Each line begins with an exercise number (e.g., 0 for the ls
+exercise, 2 for the cat exercise) (optionally surrounded by spaces), then a
+colon (optionally surrounded by spaces), then your solution to that exercise
+(leave it blank if you can't solve it).  For every exercise there is exactly one
+line.  The lines should be in increasing order of exercise numbers.  Please
+don't include multiple solutions.
+
+<p>This lab may be automarked or marked by humans.
+
+
+</body>
+</html>
