@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1">
+<title>B09 Lab week 3</title>
+<style>
+h1, h2, h3 { color: blue; }
+</style>
+</head>
+<body>
+<h1>B09 Lab week 3</h1>
+
+<p>This lab consists of two questions.
+
+
+<h2>Windows Text Files (WTF) (2 marks)</h2>
+
+<p>I have two shell scripts that are “the same” (just you wait), but I created
+them on different platforms: hello-unix was created on Linux, hello-windows was
+created on Windows.  When I test both on Mathlab, hello-windows has a problem,
+and it doesn't matter how I run it (by calling sh, by calling bash, as an
+executable):
+
+<pre>
+$ sh hello-windows
+hello-windows: 5: Syntax error: end of file unexpected (expecting "then")
+
+$ bash hello-windows
+hello-windows: line 5: syntax error: unexpected end of file
+
+$ ./hello-windows
+-bash: ./hello-windows: /bin/sh^M: bad interpreter: No such file or directory
+</pre>
+
+<p>hello-unix does not have a problem:
+
+<pre>
+$ sh hello-unix
+hello
+
+$ bash hello-unix
+hello
+
+$ ./hello-unix
+hello
+</pre>
+
+<p><b>WHYYYYY???!!!</b>
+
+<p>Both files are on Mathlab in /courses/courses/cscb09s23/laialber/l03 so you
+can (and should) see for yourself.
+
+<p>Some ways to start investigating:
+
+<ul>
+<li>What are their file sizes? (Use <code>ls -l</code> to find out.) Why are
+they different?
+<li>Check out the program
+“<a href="https://www.gnu.org/software/coreutils/manual/html_node/od-invocation.html">od</a>”
+for how to print out exact bytes and expose invisible bytes.
+<li>What does Unix use to end a line? What does Windows use to end a line?
+</ul>
+
+<p>What to hand in: Your short answer for how Windows and Unix differ in text
+files.  Put your answer in a file called “wtf.txt”.
+
+<p>P.S. Now that you know, you have no excuse for handing in a shell script that
+breaks on Mathlab!
+
+
+<h2>Shell Script Argument Processing (6 marks)</h2>
+
+<p>This question practices shell scripting and argument processing.
+
+<p>The shell script you will write will be called “<code>check.sh</code>”.  Its
+job, in short, is to check existence and/or directory-ness of user-provided
+pathnames. In detail:
+
+<p>The arguments are normally taken to be pathnames (but there is a twist
+below).  For each pathname <var>p</var>, in the given order, check
+whether <var>p</var> exists (regardless of type) or not, and outputs one of the
+following messages accordingly:
+
+<pre>
+<var>p</var> exists
+<var>p</var> does not exist
+</pre>
+
+<p>However!  If a pathname is preceded by one or more occurrences of
+“<code>-d</code>” (as a separate argument, not as part of a pathname, see
+example below), then instead check whether the pathname is an existing directory
+or not (i.e., the “<code>[ -d <var>p</var> ]</code>” test), and the possible
+messages are instead:
+
+<pre>
+<var>p</var> is a directory
+<var>p</var> is not a directory
+</pre>
+
+<p>Note that the negative case applies to both non-existing pathnames and
+existing but non-directory pathnames, as per the meaning of the “<code>[
+-d <var>p</var> ]</code>” test. (So this part keeps your job simple! &#9786;)
+
+<p>Example:
+
+<pre>
+sh check.sh 'my path' ../p2 -d ../p2 ../p2 -d -d 'my path'
+</pre>
+
+<p>This means the following checks, in order:
+
+<ol>
+  <li>Does <code>my path</code> exist? Note that this pathname contains a space.
+
+  <li>Does <code>../p2</code> exist?
+
+  <li>Is <code>../p2</code> a directory?
+
+  <li>Does <code>../p2</code> exist? (Yes just do it again, don't bother
+    remembering the past, if the user is being redundant, let them!)
+
+  <li>Is <code>my path</code> a directory? Note that two consecutive occurrences
+    of <code>-d</code> does no harm.
+</ol>
+
+<p>Hint: Use a variable to remember “the previous argument was/wasn't <code>-d</code>”.
+
+<p>One last example:
+
+<pre>
+sh check.sh /usr/bin -d /usr/bin /usr/bin/date -d /usr/bin/date
+</pre>
+
+<p>The expected output is provided as sample-output.txt.  Tell the computer to
+compare for you so it catches typos humans don't see, e.g.,:
+
+<pre>
+sh check.sh /usr/bin -d /usr/bin /usr/bin/date -d /usr/bin/date > actual.txt
+diff -u sample-output.txt actual.txt
+</pre>
+
+<p><code>diff</code> is a program that points out the differences between two
+text files.  If there is no difference, it outputs nothing, and the exit code is
+0.
+
+</body>
+</html>

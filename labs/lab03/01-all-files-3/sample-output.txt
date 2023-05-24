@@ -1,0 +1,4 @@
+/usr/bin exists
+/usr/bin is a directory
+/usr/bin/date exists
+/usr/bin/date is not a directory

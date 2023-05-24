@@ -1,0 +1,4 @@
+#!/bin/sh
+if [ x = x ]; then
+    echo "hello"
+fi
