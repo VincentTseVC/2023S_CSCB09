@@ -1,0 +1,3 @@
+/bin:/usr/bin:/usr/local/bin:/xxx   yyy:/opt/bin:.
+x:/M$Office:Job$:/bin:/usr/bin:/usr/local/bin:/xxx   yyy:/opt/bin:.
+x:/M$Office:/bin:/usr/bin:/usr/local/bin:/xxx   yyy:/opt/bin

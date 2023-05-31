@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      lang="en"
+      xml:lang="en"
+>
+<head>
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+<title>CSCB09 2023 Summer Assignment 1</title>
+<style type="text/css">
+h1, h2, h3 { color: blue; }
+dfn { font-style: normal; font-weight: bold; color: blue; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid grey; padding: 0.2em 0.5em; }
+
+/* Code excerpts from loadable source files. */
+div.excerpt {
+  margin: 1em 0em 1em; /* top, left/right, bottom */
+}
+div.excerpt > span {
+  font-size: smaller;
+  background-color: #f0f0f0;
+  padding: 0.25em;
+}
+div.excerpt > pre {
+  background-color: #f0f0f0;
+  overflow: auto;
+  padding: 0.5em;
+  margin: 0px;
+}
+
+/* popup hidable table of contents, and the button to pop it up. */
+#tocdyn {
+  position: fixed;
+  width: 15em;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  border-left: blue solid 1px;
+  border-bottom: blue solid 1px;
+  background-color: white;
+  color: black;
+  font-family: sans-serif;
+  visibility: hidden; /* initial value, to be overruled by javascript */
+}
+#tocbutton {
+  position: fixed;
+  top: 0;
+  right: 0;
+  opacity: 0.9;
+}
+#tocdyn > h1 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 0;
+}
+#tocdyn * {
+  text-align: left;
+}
+#tocdyn ul {
+  list-style-type: none;
+}
+#tocdyn > ul {
+  padding-left: 0;
+}
+#tocdyn > ul ul {
+  padding-left: 1em;
+}
+#tocdyn li {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+ul.task-list{list-style: none;}
+</style>
+<script type="text/javascript">
+function show_toc() {
+  document.getElementById("tocdyn").style.visibility = "visible";
+}
+function hide_toc() {
+  document.getElementById("tocdyn").style.visibility = "";
+}
+</script>
+</head>
+<body id="top">
+<header class="title">
+<h1 class="title">CSCB09 2023 Summer Assignment 1</h1>
+</header>
+<div id="tocbutton"><button type="button" onclick="show_toc();">Table of Contents</button></div>
+<nav id="tocdyn" role="doc-toc" onclick="hide_toc();">
+<p><a href="#top">Top</a></p>
+<ul>
+<li><a href="#editing-path-10-marks">Editing PATH (10 marks)</a>
+<ul>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#you-will-also-need">“You will also need”</a></li>
+<li><a href="#assumptions">Assumptions</a></li>
+<li><a href="#handing-in">Handing In</a></li>
+</ul></li>
+</ul>
+</nav>
+<div class="line-block">Due: June 7 Wednesday 11:59PM<br />
+This assignment is worth 10% of the course grade.</div>
+<p>In this assignment, you will implement an interesting shell script
+and learn/use some Unix utility programs.</p>
+<p>As usual, you should aim for reasonably efficient algorithms and
+reasonably organized, comprehensible code.</p>
+<p>Correctness (mostly auto-testing) is worth 90% of the marks; code
+quality is worth 10%.</p>
+<h2 id="editing-path-10-marks">Editing PATH (10 marks)</h2>
+<p>We understand that the environment variable PATH is very annoying to
+edit! While appending and prepending are not too bad (but still not
+great), deleting something is really horrendous.</p>
+<p>Let’s write a shell function to help with that! (Exercise: Why
+function?)</p>
+<p>Write a shell function <code>editpath</code> that takes 1 or more
+options followed by 0 or more arguments that we consider to be
+pathnames. The user may or may not insert <code>--</code> between the
+last option and the first pathname. So the syntax in Unix parlance
+is:</p>
+<pre><code>editpath OPTION... [--] [PATHNAME]...</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th>option</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>-a</td>
+<td>append the pathnames (1.5 marks)</td>
+</tr>
+<tr class="even">
+<td>-p</td>
+<td>prepend the pathnames (1.5 marks)</td>
+</tr>
+<tr class="odd">
+<td>-d</td>
+<td>delete the pathnames (6 marks)</td>
+</tr>
+<tr class="even">
+<td>none</td>
+<td>illegal (1 mark)</td>
+</tr>
+</tbody>
+</table>
+<p>If 2 or more options are given, the last one takes priority. If 0
+options are given, the function returns 1 without changing PATH; error
+messages are optional but please send to stderr only.</p>
+<p>Please define your <code>editpath</code> function in def-editpath.sh
+and hand it in. You may add helper functions.</p>
+<h3 id="examples">Examples</h3>
+<pre><code>$ . ./def-editpath.sh
+$ PATH=/bin:/usr/bin:/usr/local/bin
+$ editpath -a &#39;/xxx   yyy&#39; /opt/bin .
+$ /usr/bin/printenv PATH
+/bin:/usr/bin:/usr/local/bin:/xxx   yyy:/opt/bin:.
+$ editpath -p &#39;Job$&#39; &#39;/M$Office&#39; x
+$ /usr/bin/printenv PATH
+x:/M$Office:Job$:/bin:/usr/bin:/usr/local/bin:/xxx   yyy:/opt/bin:.
+$ editpath -d . &#39;Job$&#39; usr
+$ /usr/bin/printenv PATH
+x:/M$Office:/bin:/usr/bin:/usr/local/bin:/xxx   yyy:/opt/bin</code></pre>
+<p>The provided script example.sh contains the commands above. Test it
+with <code>sh example.sh</code>. The provided file expected.txt is the
+exact expected output.</p>
+<p>You do know how to use pipelining/redirection and the
+<code>diff</code> program to check your output against expected.txt,
+right? Automarking will not accept any “invisible” difference in blanks
+and unprinted bytes. B09 is one of the few courses where you develop
+this sensitivity, as all programmers are supposed to!</p>
+<h3 id="you-will-also-need">“You will also need”</h3>
+<p>The <a
+href="https://www.gnu.org/software/grep/manual/html_node/index.html"><code>grep</code></a>
+program can help you delete; find out which of its non-default options
+make your life simplest. But note that other familar utility programs
+are needed too.</p>
+<p>This assignment is designed to be easily solved without creating
+intermediate “temp” files. Automarking will run tests in a docker
+container with a read-only file system.</p>
+<h3 id="assumptions">Assumptions</h3>
+<p>We assume:</p>
+<ul>
+<li><p>The user gives options (if any) before pathnames (if any).</p>
+<p>If the user intends a pathname to be <code>-a</code> for example,
+they will definitely insert <code>--</code> to disambiguate, e.g., this
+means append <code>-a</code>:</p>
+<pre><code>editpath -a -- -a</code></pre>
+<p>If you use <code>getopts</code>, you get this feature for
+free!</p></li>
+<li><p>Pathnames are non-empty. Pathnames do not contain newlines,
+backslashes, single quotes, double quotes, colons. However, almost any
+other characters can be fair game, including spaces, $, #.</p></li>
+<li><p>The original value of PATH does not contain newlines,
+backslashes, single quotes, double quotes. However, almost any other
+characters can be fair game, including spaces, $, #.</p></li>
+<li><p>Every colon in the original value of PATH sits between two
+non-empty pathnames.</p></li>
+<li><p>Don’t check that user-provided pathnames actually exist as
+directories, or is/isn’t already present in PATH. Just obey the
+user.</p>
+<p>E.g., if the user adds the same pathname multiple times, do it.</p>
+<p>E.g., if the user deletes a pathname that does not occur in PATH,
+this is not an error, the new PATH is identical to the old
+PATH.</p></li>
+</ul>
+<h3 id="handing-in">Handing In</h3>
+<p>Please define your <code>editpath</code> function in def-editpath.sh
+and hand it in. You may add helper functions.</p>
+</body>
+</html>
