@@ -1,0 +1,17 @@
+myprog: myprog.o cyl.o circle.o
+	gcc -o myprog myprog.o cyl.o circle.o
+
+myprog.o: myprog.c cyl.h
+	gcc -c myprog.c
+
+cyl.o: cyl.c cyl.h circle.h
+	gcc -c cyl.c
+
+circle.o: circle.c circle.h
+	gcc -c circle.c
+
+clean:
+	rm myprog *.o
+
+.PHONY: clean
+

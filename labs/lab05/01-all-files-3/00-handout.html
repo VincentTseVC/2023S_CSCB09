@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1">
+<title>B09 Lab week 5</title>
+<style>
+h1, h2, h3 { color: blue; }
+*.nest { margin-left: 2em }
+table {
+  border-collapse: collapse;
+}
+td, th {
+  padding: 3pt;
+  vertical-align: baseline;
+  border: 1pt solid;
+}
+td, th.left {
+  text-align: left;
+}
+</style>
+</head>
+<body>
+<h1>B09 Lab week 5</h1>
+
+<p>This is an exercise in trouble-shooting mistakes in using malloc'd space.  It
+is almost a certainty that when it is your turn you will make even worse and
+harder-to-notice mistakes than the ones in this exercise, so it is important to
+get started on detecting problematic code.
+
+<p>My program ‘<a href="circle.c">circle.c</a>’ is faulty!  Your job is to fix
+my mistakes.  For simplicity, don't worry about “have you checked that malloc is
+not returning NULL?”&mdash;My mistakes are subtler than that!
+
+<p>Valgrind contains a great tool for catching memory usage errors during run
+time, including array index out of bounds, mistakes in using malloc'd space, and
+mistakes about freeing space.  (Forgetting to free is known as “memory leak”.)
+
+<p>Valgrind is already avaiable on Mathlab. In your own Ubuntu, you can install
+the C compiler, Valgrind, and related packages by
+
+<pre>sudo apt install gcc libc6-dev make manpages-dev glibc-doc valgrind
+</pre>
+
+<p>Compile my circle.c by
+
+<pre>gcc -O2 -Wall -g circle.c -o circle -lm
+</pre>
+
+<p>“-g” records “debugging information” such as source code line numbers for use
+by Valgrind (and other debugging tools).  “-lm” requests the math library
+(because I use sin and cos).
+
+<p>Run it under Valgrind by:
+
+<pre>
+valgrind --leak-check=yes ./circle
+</pre>
+
+<p>If you want Valgrind's report in a file instead, add
+“<code>--log-file=<var>filename</var></code>”.
+
+<p>You can declare victory when Valgrind concludes:
+
+<pre>ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+</pre>
+
+<p>(and you actually fix the errors and preserve/restore intended functionality,
+as opposed to just deleting or trivializing my code!)
+
+<p>Check out
+<a href="http://www.valgrind.org/docs/manual/quick-start.html">Valgrind quick
+start guide</a> for more explanations and digging deeper.  (And <code>man
+valgrind</code> and <code>valgrind --help</code> as usual.)
+
+
+</body>
+</html>

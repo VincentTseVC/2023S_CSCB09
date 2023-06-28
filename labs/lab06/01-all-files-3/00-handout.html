@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1">
+<title>B09 Lab week 6</title>
+<style>
+h1, h2, h3 { color: blue; }
+kbd { font-family: monospace; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>B09 Lab week 6</h1>
+
+<p>This lab is an exercise on binary I/O (fread, fwrite).
+
+<p>A struct “<code>point</code>” is defined in point.h; here it is again:
+
+<pre>
+typedef struct point {
+  int x, y;
+} point;
+</pre>
+
+<p>Your job is to implement the following functions for writing and reading
+an array of these points to/from a file, given pathname and how many points:
+
+<pre>
+ssize_t save_point_array(const char *pathname, size_t n, const point *a);
+ssize_t load_point_array(const char *pathname, size_t n, point *a);
+</pre>
+
+<p><code>n</code> is how many points to write/read, <code>a</code> is the
+address of the array of points. You may assume that the array has space
+for <code>n</code> elements.
+
+<p>Put your code in saveload.c (template provided among starter files).
+
+
+<h3>More requirements on <code>save_point_array</code></h3>
+
+<p>The fopen mode should be "w" or "wb". If opening fails, your return value is
+-1.  You may print an error message to stderr for your sake, it's up to you.
+
+<p>If opening succeeds, your return value is how many points have been
+successfully written. (If you use fwrite correctly, it is simply fwrite's return
+value.)
+
+<p>Close the file before returning (if opening succeeded).
+
+<p>For simplicity, there is no need to handle other kinds of errors (apart from
+failure to open).
+
+
+<h3>More requirements on <code>load_point_array</code></h3>
+
+<p>The fopen mode should be "r" or "rb". If opening fails, your return value is
+-1.  You may print an error message to stderr for your sake, it's up to you.
+
+<p>If opening succeeds, your return value is how many points have been
+successfully read. (If you use fread correctly, it is simply fread's return
+value.)  It is possible that the file contains fewer or more than n points,
+so just read n points or what's available if fewer.
+
+<p>Close the file before returning (if opening succeeded).
+
+<p>For simplicity, there is no need to handle other kinds of errors (apart from
+failure to open).
+
+
+<h3>Provided sample</h3>
+
+<p>A rudimentary test driver basictest.c and a sample file points-sample of 3
+points are provided.  You can compile and run basictest.c by:
+
+<pre>
+gcc -O2 -Wall basictest.c saveload.c -o basictest
+./basictest
+</pre>
+
+<p>When it tests <code>save_point_array</code>, it writes to points-saved.
+
+<p>When it tests <code>load_point_array</code>, it reads points-sample and
+compares with hardcoded expected values.
+
+<p>You can use the <code>od</code> program
+(<a href="https://www.gnu.org/software/coreutils/manual/html_node/od-invocation.html"
+>doc</a>) to visualize the files, e.g.,
+
+<pre>od -t dI points-saved</pre>
+
+<p>which nicely formats the data as a sequence of ints.
+
+</body>
+</html>

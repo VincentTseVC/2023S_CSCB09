@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      lang="en"
+      xml:lang="en"
+>
+<head>
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+<title>CSCB09 2023 Summer Assignment 2</title>
+<style type="text/css">
+h1, h2, h3 { color: blue; }
+dfn { font-style: normal; font-weight: bold; color: blue; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid grey; padding: 0.2em 0.5em; }
+
+/* Code excerpts from loadable source files. */
+div.excerpt {
+  margin: 1em 0em 1em; /* top, left/right, bottom */
+}
+div.excerpt > span {
+  font-size: smaller;
+  background-color: #f0f0f0;
+  padding: 0.25em;
+}
+div.excerpt > pre {
+  background-color: #f0f0f0;
+  overflow: auto;
+  padding: 0.5em;
+  margin: 0px;
+}
+
+/* popup hidable table of contents, and the button to pop it up. */
+#tocdyn {
+  position: fixed;
+  width: 15em;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  border-left: blue solid 1px;
+  border-bottom: blue solid 1px;
+  background-color: white;
+  color: black;
+  font-family: sans-serif;
+  visibility: hidden; /* initial value, to be overruled by javascript */
+}
+#tocbutton {
+  position: fixed;
+  top: 0;
+  right: 0;
+  opacity: 0.9;
+}
+#tocdyn > h1 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 0;
+}
+#tocdyn * {
+  text-align: left;
+}
+#tocdyn ul {
+  list-style-type: none;
+}
+#tocdyn > ul {
+  padding-left: 0;
+}
+#tocdyn > ul ul {
+  padding-left: 1em;
+}
+#tocdyn li {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+ul.task-list{list-style: none;}
+</style>
+<script type="text/javascript">
+function show_toc() {
+  document.getElementById("tocdyn").style.visibility = "visible";
+}
+function hide_toc() {
+  document.getElementById("tocdyn").style.visibility = "";
+}
+</script>
+</head>
+<body id="top">
+<header class="title">
+<h1 class="title">CSCB09 2023 Summer Assignment 2</h1>
+</header>
+<div id="tocbutton"><button type="button" onclick="show_toc();">Table of Contents</button></div>
+<nav id="tocdyn" role="doc-toc" onclick="hide_toc();">
+<p><a href="#top">Top</a></p>
+<ul>
+<li><a href="#heapsort">Heapsort</a>
+<ul>
+<li><a href="#file-and-record-format">File And Record Format</a></li>
+<li><a href="#further-specifications">Further Specifications</a></li>
+<li><a href="#debugging-and-error-messages">Debugging And Error
+Messages</a></li>
+</ul></li>
+<li><a href="#handing-in">Handing In</a></li>
+</ul>
+</nav>
+<div class="line-block">Due: July 1 Saturday 11:59PM<br />
+This assignment is worth 10% of the course grade.</div>
+<p>In this assignment, you will use <code>fread()</code>,
+<code>fwrite()</code>, and <code>fseek()</code> to implement operations
+on fixed-length records in a binary data file.</p>
+<p>As usual, you should aim for reasonably efficient algorithms and
+reasonably organized, comprehensible code.</p>
+<p>Correctness (mostly auto-testing) is worth 90% of the marks; code
+quality is worth 10%.</p>
+<h2 id="heapsort">Heapsort</h2>
+<p>In short, implement the Heapsort algorithm, except using random
+access (<code>fseek()</code>) on a file instead of an in-memory
+array!</p>
+<p>See my <a href="heap.pdf">old lecture slides on max-heaps and
+Heapsort</a>.</p>
+<p>I strongly encourage you to write a helper function for “heapify at
+v” because it is needed at two places, and it is the most annoying part
+of the algorithm, so you don’t want to repeat the code twice. Other
+helper functions can also be good ideas.</p>
+<p>Although Heapsort is not a practical choice for files, it is still a
+good exercise on the nuances of random access on files. (Perhaps next
+year we will do a more justifiable but harder example, such as
+B-trees!)</p>
+<h3 id="file-and-record-format">File And Record Format</h3>
+<p>The file is a binary file of 0 or more customer records, each record
+matching the C struct <code>customer</code> in customer.h. The size
+conspires to be 48 bytes on the platform we use.</p>
+<p>Of note is that customer name is not always a NUL-terminated C
+string. If the name is short, it is true that the remainder of the array
+is filled with NUL, but this is only for best practice in privacy. The
+longest name can really have length <code>CUSTOMER_NAME_MAX</code>, in
+which case there is no NUL right after.</p>
+<p>And easy way find out the number of records in the file is:
+<code>fseek()</code> to the end, then <code>ftell()</code>, divide by
+<code>sizeof(customer)</code>.</p>
+<p>We want to sort the customer records by loyalty points in increasing
+order; among customers with the same loyalty points, sort by names in
+alphabetical order. It is also possible for multiple records to have the
+same loyalty points and the same name; then none of them should be
+dropped.</p>
+<p>There are many good ways to examine the file format when you debug.
+You already know about the <code>od</code> program. Another choice is
+<code>hexdump -C</code> (see <code>man hexdump</code>). You should also
+write your own C code to print a record in whatever human format you
+understand.</p>
+<p>A sample file sample.dat is provided, but only to the point of
+exemplifying the file format. It has way too few records for testing
+your sorting code. You should write your own code to generate more
+records for testing.</p>
+<p>Here are the customers in the sample file:</p>
+<table>
+<thead>
+<tr class="header">
+<th>name</th>
+<th style="text-align: right;">loyalty</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dennis Ritchie</td>
+<td style="text-align: right;">1926</td>
+</tr>
+<tr class="even">
+<td>Charles Anthony Richard Hoare</td>
+<td style="text-align: right;">71934</td>
+</tr>
+<tr class="odd">
+<td>The Boy Who Lived And Defeated The Dark Lord</td>
+<td style="text-align: right;">305419896</td>
+</tr>
+<tr class="even">
+<td>Alan Turing</td>
+<td style="text-align: right;">305419896</td>
+</tr>
+</tbody>
+</table>
+<h3 id="further-specifications">Further Specifications</h3>
+<p>The sorting function (the function I will call for marking) is to
+be:</p>
+<pre><code>int heapsort(const char *filename);</code></pre>
+<p>It should return 0 (C false) if there is an error, 1 (C true)
+otherwise.</p>
+<p>For simplicity, the only error you are required to catch is when
+<code>fopen()</code> fails. Actually this is to help you catch your own
+typos in filenames in your own tests. But you should also check errors
+for <code>fseek()</code> and <code>fread()</code> because they almost
+certainly mean you have bugs.</p>
+<p>Marking will be done under a severe memory limit (4000KB) with much
+larger files; it will also be in a docker container with little or no
+spare disk space.</p>
+<p>Your code will be compiled with <code>-O2 -Wall</code> when
+marking.</p>
+<p>You can check memory usage with e.g.</p>
+<pre><code>/usr/bin/time -f%M ./a.out</code></pre>
+<p>It prints out how many kilobytes of memory you used.</p>
+<p>You can test under the memory limit with e.g.</p>
+<pre><code>bash -c &#39;ulimit -v 4000; exec ./a.out&#39;</code></pre>
+<p><code>ulimit</code> is a bash command; see <code>help ulimit</code>
+and perhaps the textbook [PI] Chapter 36 (especially about
+RLIMIT_AS).</p>
+<h3 id="debugging-and-error-messages">Debugging And Error Messages</h3>
+<p>If you like to print debugging or error messages for your own sake,
+please send them to stderr only.</p>
+<h2 id="handing-in">Handing In</h2>
+<p>Please hand in heapsort.c containing <code>heapsort()</code> and
+helper functions.</p>
+</body>
+</html>
