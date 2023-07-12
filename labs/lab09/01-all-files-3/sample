@@ -1,0 +1,19 @@
+#!/bin/sh
+
+echo hi >&2
+
+case "$1" in
+  signal)
+    kill $$
+    ;;
+  [0-9])
+    exit "$1"
+    ;;
+  po)
+    sleep 1 # Give parent a chance to close what it needs to close.
+    # Now see what it still keeps opened, using kernel-provided /proc system:
+    ls -l /proc/$PPID/fd
+    ;;
+  *)
+    exit 42
+esac

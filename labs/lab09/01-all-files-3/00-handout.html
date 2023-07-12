@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1">
+<title>B09 Lab week 9</title>
+<style>
+h1, h2, h3 { color: blue; }
+*.nest { margin-left: 2em }
+table {
+  border-collapse: collapse;
+}
+td, th {
+  padding: 3pt;
+  vertical-align: baseline;
+  border: 1pt solid;
+}
+td, th.left {
+  text-align: left;
+}
+</style>
+</head>
+<body>
+<h1>B09 Lab week 9</h1>
+
+<h2>Question 1 [2 marks]</h2>
+
+<p>This is an exercise in finding and terminating processes running in the
+background.
+
+<p>In future assignments, you will implement programs that fork a lot, and you
+will make mistakes resulting in child processes continuing to run behind your
+back.  If this happens on Mathlab or a lab computer, you are slowing down
+computers that other people need, and you are not being a good citizen!  It is
+important that you find and terminate these runaway processes.
+
+<p>To practice this, compile and run the provided
+<a href="imtrash.c">imtrash.c</a> program. What it does: fork 5 children, then
+exit; but the children are still running!  (In this lab, the children idle for
+20 minutes then exit, no harm done in case you fail this mission.  In reality,
+mistakes will likely cause children to actively hog the CPUs forever.)
+
+<p>Your jobs:
+
+<ol>
+  <li>How do you find the PIDs of those processes? (One of them plays a trick to
+    try to be harder to find!)
+  <li>How do you terminate them?
+</ol>
+
+<p>Keep in mind that a lot of other students may have similarly named processes
+too (when everyone is doing the same assignment on the same server).  You must
+find and terminate those belonging to you only.
+
+<p>What to hand in: Write down your command(s) and/or method(s) in a text file
+cleanup.txt and submit it.  It will be marked by a TA.
+
+
+<h2>Question 2 [6 marks]</h2>
+
+<p>This is an exercise in launching a child process and setting up file
+redirection.
+
+<p>We will be implementing the equivalent of “<code>cmd 2&gt; filename</code>”.
+
+<p>The finished program <code>err-redir</code> will take 2 or more arguments:
+filename, program to run, command line arguments for that program.  Example:
+
+<pre>
+./err-redir xyz ls dne
+</pre
+
+<p>runs <code>ls dne</code>, and its stderr should go to filename xyz.
+(Since dne does not exist, there should be an error message in xyz.)
+
+<p>The provided starter file err-redir.c already has a skeleton.  But there are
+many things to complete or fix (marked by “TODO”); please see the file for
+specifications.
+
+<p>Some sample programs are provided: sample (shell script) and check-open.c.
+Please take a look at what they do and how they help you test.
+
+<p>But here are some sample sessions:
+
+<pre>
+$ ./err-redir xyz ls dne
+wait status: 0200
+exit status: 2
+$ cat xyz
+ls: cannot access 'dne': No such file or directory
+
+$ ./err-redir xyz ./sample 7
+wait status: 0700
+exit status: 7
+$ cat xyz
+hi
+
+$ ./err-redir xyz ./sample signal
+wait status: 000f
+signal: 15
+
+$ ./err-redir xyz ./sample po
+total 0
+lrwx------ 1 trebla trebla 64 Jul  9 14:27 0 -> /dev/pts/0
+lrwx------ 1 trebla trebla 64 Jul  9 14:27 1 -> /dev/pts/0
+lrwx------ 1 trebla trebla 64 Jul  9 14:27 2 -> /dev/pts/0
+wait status: 0000
+exit status: 0
+
+$ ./err-redir xyz ./check-open
+AOK
+wait status: 0000
+exit status: 0
+
+$ ./err-redir xyz ./err-redir.c
+cannot exec: Permission denied
+wait status: 7e00
+exit status: 126
+
+$ ./err-redir xyz asdfqwerty
+cannot exec: No such file or directory
+wait status: 7f00
+exit status: 127
+</pre>
+
+</body>
+</html>

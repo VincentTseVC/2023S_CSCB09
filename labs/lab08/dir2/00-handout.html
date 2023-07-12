@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1">
+<title>B09 Lab week 9</title>
+<style>
+h1, h2, h3 { color: blue; }
+*.nest { margin-left: 2em }
+table {
+  border-collapse: collapse;
+}
+td, th {
+  padding: 3pt;
+  vertical-align: baseline;
+  border: 1pt solid;
+}
+td, th.left {
+  text-align: left;
+}
+</style>
+</head>
+<body>
+<h1>B09 Lab week 8</h1>
+
+<p>This lab is on learning and practicing <code>opendir</code>,
+<code>readdir</code>, and <code>closedir</code> to read a directory.  They are
+fairly straightforward; please read their man pages (e.g., “<code>man
+readdir</code>”) for how to use them.
+
+<p>Write a C program list.c that takes 1 to 2 command-line arguments.
+Treat the 1st argument as the pathname of a directory.
+Using <code>opendir</code>, <code>readdir</code>, and <code>closedir</code>,
+read the filenames in that directory and print them to stdout, one per line.
+
+<p>You will notice that the filenames are not sorted. This is normal. Just print
+in the order you find. (“<code>ls -1f</code>” gives the same order, you can use
+it to check.)
+
+<p>If the 2nd argument exists, it will be a single character.
+(If you see more characters, ignore them.)
+In this case, do not print filenames that start with that character.
+
+<p>For simplicity, you may assume legal inputs as promised above, and omit most
+error handling, though it is always a good idea to check whether
+<code>opendir</code> actually succeeds. If you add debugging/error messages for
+your sake, please send them to stderr only.
+
+<p>Example: If a certain directory has:
+<pre>
+$ ls -1f dir
+testsuite.csv
+..
+.
+pose
+sample-main.c
+marking-scheme.yml
+</pre>
+
+<p>Then running your program for it gives:
+<pre>
+$ ./a.out dir
+testsuite.csv
+..
+.
+pose
+sample-main.c
+marking-scheme.yml
+</pre>
+
+<p>And with the 2nd parameter:
+
+<pre>
+$ ./a.out dir .
+testsuite.csv
+pose
+sample-main.c
+marking-scheme.yml
+</pre>
+
+<p>or this:
+
+<pre>
+$ ./a.out dir p
+testsuite.csv
+..
+.
+sample-main.c
+marking-scheme.yml
+</pre>
+
+<p>Please submit your C file as list.c
+
+</body>
+</html>
