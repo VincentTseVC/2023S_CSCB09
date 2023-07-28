@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      lang="en"
+      xml:lang="en"
+>
+<head>
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+<title>CSCB09 2022 Summer Week 11 Lab</title>
+<style type="text/css">
+h1, h2, h3 { color: blue; }
+dfn { font-style: normal; font-weight: bold; color: blue; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid grey; padding: 0.2em 0.5em; }
+
+/* Code excerpts from loadable source files. */
+div.excerpt {
+  margin: 1em 0em 1em; /* top, left/right, bottom */
+}
+div.excerpt > span {
+  font-size: smaller;
+  background-color: #f0f0f0;
+  padding: 0.25em;
+}
+div.excerpt > pre {
+  background-color: #f0f0f0;
+  overflow: auto;
+  padding: 0.5em;
+  margin: 0px;
+}
+
+/* popup hidable table of contents, and the button to pop it up. */
+#tocdyn {
+  position: fixed;
+  width: 15em;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  border-left: blue solid 1px;
+  border-bottom: blue solid 1px;
+  background-color: white;
+  color: black;
+  font-family: sans-serif;
+  visibility: hidden; /* initial value, to be overruled by javascript */
+}
+#tocbutton {
+  position: fixed;
+  top: 0;
+  right: 0;
+  opacity: 0.9;
+}
+#tocdyn > h1 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 0;
+}
+#tocdyn * {
+  text-align: left;
+}
+#tocdyn ul {
+  list-style-type: none;
+}
+#tocdyn > ul {
+  padding-left: 0;
+}
+#tocdyn > ul ul {
+  padding-left: 1em;
+}
+#tocdyn li {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+ul.task-list{list-style: none;}
+</style>
+<script type="text/javascript">
+function show_toc() {
+  document.getElementById("tocdyn").style.visibility = "visible";
+}
+function hide_toc() {
+  document.getElementById("tocdyn").style.visibility = "";
+}
+</script>
+</head>
+<body id="top">
+<header class="title">
+<h1 class="title">CSCB09 2022 Summer Week 11 Lab</h1>
+</header>
+<p>In this lab, you will learn and use <code>getaddrinfo()</code> for
+looking up the IPv4 addresses of a domain name aka host name. You will
+also learn <code>freeaddrinfo()</code> for freeing the data structure
+created by <code>getaddrinfo()</code>.</p>
+<h2 id="getaddrinfo">getaddrinfo</h2>
+<p><code>getaddrinfo()</code> takes many parameters because it can do
+many things; the man page can be overwhelming at first sight. On the
+bright side, it offers to completely fill in a <code>sockaddr_in</code>
+struct for you (or <code>sockaddr_in6</code> when used for IPv6), ready
+for passing to <code>connect()</code>.</p>
+<p>You should read the man page, but here is an orientation:</p>
+<pre><code>int getaddrinfo(const char *host,
+                const char *service,
+                const struct addrinfo *hints,
+                struct addrinfo **res);</code></pre>
+<ul>
+<li><p><code>host</code>: The domain name, e.g.,
+<code>"mathlab.utsc.utoronto.ca"</code></p></li>
+<li><p><code>service</code>: If you intend a port number, this can be
+the string form of that number, e.g., <code>"22"</code> for port number
+22. Why string? Because many common port numbers have names, e.g., 22 is
+known as ssh, and you can give <code>"ssh"</code> here. (See
+/etc/services for more common ports and names.)</p>
+<p><code>getaddrinfo()</code> wants this because it offers to fill in
+the port-number field in <code>sockaddr_in</code> (or
+<code>sockaddr_in6</code>) for you later.</p></li>
+<li><p><code>hints</code>: Pointer to a struct you have filled in for
+narrowing down the search, e.g., “only IPv4 addresses”, “only for stream
+sockets”. (See below.)</p></li>
+<li><p><code>res</code>: Pointer to your own pointer variable for
+receiving answer from <code>getaddrinfo()</code>.</p></li>
+</ul>
+<p>For the purpose of <code>hints</code>, the following 4 fields in the
+<code>addrinfo</code> struct are of interest, and the other fields
+should be set to 0 (if number field) or NULL (if pointer field):</p>
+<ul>
+<li><p><code>ai_family</code>: <code>AF_INET</code> if you want
+IPv4-only, <code>AF_INET6</code> if IPv6-only, <code>AF_UNSPEC</code> if
+you accept both.</p></li>
+<li><p><code>ai_socktype</code>: <code>SOCK_STREAM</code> if stream-only
+(this course), <code>SOCK_DGRAM</code> if datagram-only, 0 if you accept
+both.</p></li>
+<li><p><code>ai_protocol</code>: 0 in this course for stream-only.
+(Similar to the protocol parameter of <code>socket()</code>.)</p></li>
+<li><p><code>ai_flags</code>: Moar customizations. You may just use 0
+for this lab. See the man page or the textbook for the full
+menu.</p></li>
+</ul>
+<p>In the <code>addrinfo</code> struct you receive via <code>res</code>,
+the fields <code>ai_family</code>, <code>ai_socktype</code>,
+<code>ai_protocol</code> have actual resolved values (useful for calling
+<code>socket()</code>), plus:</p>
+<ul>
+<li><p><code>ai_addr</code> is pointer to a <code>sockaddr</code> struct
+(including port number), ready for <code>connect()</code>. In this lab,
+you give it to <code>print_inet4_addr()</code> (provided in the starter
+code).</p></li>
+<li><p><code>ai_addrlen</code> is actual size of that struct, ready for
+<code>connect()</code>.</p></li>
+<li><p><code>ai_canonname</code>: Not used in this lab. (See the man
+page.)</p></li>
+<li><p><code>ai_next</code> is a pointer to another
+<code>addrinfo</code>. Yes you have a linked list of possibly multiple
+answers. Reasons: a domain name can have multiple IP addresses; if you
+didn’t restrict to stream-only or datagram-only, you may receive both
+versions; if you didn’t restrict to IPv4-only or IPv6-only, you may
+receive both.</p></li>
+</ul>
+<h2 id="task">Task</h2>
+<p>Your job is to complete getaddr.c to call <code>getaddrinfo()</code>
+and then use the provided <code>print_inet4_addr()</code> to print out
+all IPv4 addresses found.</p>
+<p>After that, learn and use <code>freeaddrinfo()</code> to free the
+<code>addrinfo</code> linked list. I will use valgrind to check
+this!</p>
+<p>Optional: If <code>getaddrinfo()</code> returns a non-zero number,
+learn and use <code>gai_strerror()</code> for the corresponding error
+message, print it to stderr, and exit.</p>
+<p>Sample runs and outputs, assuming your executable is ./getaddr :</p>
+<pre><code>$ ./getaddr utsc.utoronto.ca
+142.1.96.30
+$ ./getaddr ageofempires.com | sort
+20.112.250.133
+20.231.239.246
+20.236.44.162
+20.53.203.50
+20.76.201.171</code></pre>
+<p>The ageofempires.com example shows a case of multiple answers.
+Although the order can be different every time, piping to
+<code>sort</code> should yield a reproducible result, as shown.</p>
+</body>
+</html>

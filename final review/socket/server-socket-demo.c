@@ -7,13 +7,15 @@
 #include <signal.h>
 #include <sys/select.h>
 
-#define PORT_NUM 5000
+//#define PORT_NUM 5000
 #define MAX_BACKLOG 5
 
 void serve_client(int fd);
 
 
-int main() {
+int main(int argc, char **argv) {
+
+    unsigned short port = (unsigned short) atoi(argv[1]);
 
     int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (sock_fd < 0) {
@@ -23,7 +25,7 @@ int main() {
 
     struct sockaddr_in server;
     server.sin_family = AF_INET;
-    server.sin_port = htons(PORT_NUM);  // Note use of htons here
+    server.sin_port = htons(port);  // Note use of htons here
     server.sin_addr.s_addr = INADDR_ANY;
     memset(&server.sin_zero, 0, sizeof(server.sin_zero));
 
@@ -39,17 +41,18 @@ int main() {
         exit(1);
     }
     
-    fd_set readfds, activefds;
-    FD_ZERO(&activefds);
-    FD_SET(sock_fd, &activefds);
+    fd_set all_fds, readfds;
+    FD_ZERO(&all_fds);
+    FD_SET(sock_fd, &all_fds);
+    int max_fd = sock_fd;
 
     for (;;) {
         // make a copy of activefds set
-        readfds = activefds;
+        readfds = all_fds;
 
-        if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) < 0) continue;
+        if (select(max_fd + 1, &readfds, NULL, NULL, NULL) < 0) continue;
 
-        for (int fd = 3; fd < FD_SETSIZE; fd++) {
+        for (int fd = 3; fd < max_fd+1; fd++) {
             
             if (FD_ISSET(fd, &readfds)) {
                 if (fd == sock_fd) {
@@ -65,14 +68,18 @@ int main() {
                         exit(1);
                     }
                     // add the new client_fd to the set
-                    FD_SET(client_fd, &activefds);
+                    FD_SET(client_fd, &all_fds);
+
+                    if (client_fd > max_fd)
+                        max_fd = client_fd;
+
                     printf("Server: got a new connection.\n");
 
                 }
                 else { 
                     /* Data arriving on an already-connected socket (client_fd) */
                     serve_client(fd);
-                    FD_CLR(fd, &activefds);
+                    FD_CLR(fd, &all_fds);
                     close(fd);
                 }
             }

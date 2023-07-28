@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
     char *order = (argc > 3) ? argv[3] : "cheese burger";
 
-    // write(sock_fd, order, strlen(order));
+     write(sock_fd, order, strlen(order));
 
     char buf[128];
     int num_read = read(sock_fd, buf, 127);
