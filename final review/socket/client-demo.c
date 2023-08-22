@@ -9,7 +9,7 @@
 // #define MY_PORT 5000
 
 int main(int argc, char **argv) {
-    
+
     if (argc < 3) {
         perror("client: Need server IPv4 address.");
         return 1;
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     unsigned short port = (unsigned short) atoi(argv[2]);
 
 
-    /** Create Socket. 
+    /** Create Socket.
      * (check server-demo.c for details)
      **/
     int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    /** Create struct representing the server. 
+    /** Create struct representing the server.
      * (check server-demo.c for details)
      **/
     struct sockaddr_in server;
@@ -35,16 +35,16 @@ int main(int argc, char **argv) {
     server.sin_port = htons(port);
 
 
-    /** Convert the character string into a network address structure (IPv4 or IPv6). 
-     * 
+    /** Convert the character string into a network address structure (IPv4 or IPv6).
+     *
      * int inet_pton(int af, const char *src, void *dst);
-     * 
+     *
      * This function converts the character string src into a network
      * address structure in the af address family, then copies the
      * network address structure to dst.  The af argument must be either
      * AF_INET or AF_INET6.  dst is written in network byte order.
-     * 
-     * return 
+     *
+     * return
      *  1   on success (network address was successfully converted).
      *  0   if src does not contain a character string representing a valid network address in the specified address family.
      *  -1  If af does not contain a valid address family, and errno is set to EAFNOSUPPORT.
@@ -55,10 +55,10 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    /** request connection to server. 
-     * 
+    /** request connection to server.
+     *
      * int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
-     * 
+     *
      * returns 0 on success and -1 on failure setting errno.
      **/
     if (connect(sock_fd, (struct sockaddr *)&server, sizeof(server)) == -1) {
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
     char *order = (argc > 3) ? argv[3] : "cheese burger";
 
-     write(sock_fd, order, strlen(order));
+    //  write(sock_fd, order, strlen(order));
 
     char buf[128];
     int num_read = read(sock_fd, buf, 127);
